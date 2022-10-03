@@ -9,16 +9,28 @@ omp::prof::StompProfiler& omp::prof::StompProfiler::GetProfiler()
 omp::prof::StompProfiler::ThreadProfPtr omp::prof::StompProfiler::GetThreadProfiler(std::thread::id ThreadId) const
 {
     int8_t index = GetIndexFromThreadId(ThreadId);
-    return ThreadsData.at(index);
+    return ThreadsProfilers.at(index);
 }
 
 int8_t omp::prof::StompProfiler::GetIndexFromThreadId(std::thread::id ThreadId) const
 {
-    return 0;
+    if (ThreadsInfo.find(ThreadId) != ThreadsInfo.end())
+    {
+        return ThreadsInfo.at(ThreadId).IndexInProfiler;
+    }
+    return -1;
 }
 
-void omp::prof::StompProfiler::CreateThreadProfilerAt(int8_t index)
+void omp::prof::StompProfiler::CreateThreadProfiler(const std::string& name)
 {
+    static int8_t index = 0;
     auto profiler = std::make_shared<ThreadProfiler>();
-    ThreadsData[index] = profiler;
+    auto thread_id = std::this_thread::get_id();
+    ThreadData data;
+    data.IndexInProfiler = index;
+    data.Name = name;
+
+    ThreadsInfo[thread_id] = data;
+    ThreadsProfilers.push_back(profiler);
+    index++;
 }

@@ -10,7 +10,7 @@ namespace omp::prof{
 
     struct ProfilerData
     {
-        std::string Name;
+        std::string Name = "noname";
 
         float BeginTime;
         float EndTime;
@@ -18,9 +18,9 @@ namespace omp::prof{
 
     struct ThreadData
     {
-        std::string Name;
-        int8_t IndexInProfiler;
-        bool IsMainThread;
+        std::string Name = "noname";
+        int8_t IndexInProfiler = -1;
+        bool IsMainThread = false;
     };
 
 class ThreadProfiler;
@@ -37,14 +37,14 @@ public:
     StompProfiler& operator=(const StompProfiler&) = delete;
 
     ThreadProfPtr GetThreadProfiler(std::thread::id ThreadId) const;
+    void CreateThreadProfiler(const std::string& name);
 
 private:
-    std::vector<ThreadProfPtr> ThreadsData;
-    std::unordered_map<int16_t, ThreadData> ThreadsInfo;
+    std::vector<ThreadProfPtr> ThreadsProfilers;
+    std::unordered_map<std::thread::id, ThreadData> ThreadsInfo;
 
     // Subroutines //
     int8_t GetIndexFromThreadId(std::thread::id ThreadId) const;
-    void CreateThreadProfilerAt(int8_t index);
 };
 
 class ThreadProfiler

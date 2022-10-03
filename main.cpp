@@ -15,15 +15,18 @@ void function()
 }
 
 int main() {
+    PROFILE_THREAD("Main")
     std::cout << "Hello, World!" << std::endl;
     //function();
     std::cout << std::this_thread::get_id() << std::endl;
     std::thread first([](){
+        PROFILE_THREAD("first")
         PROFILE_FUNCTION_NAME("Lyamda")
         function();
         std::cout << std::this_thread::get_id() << std::endl;
     });
     std::thread second([](){
+        PROFILE_THREAD("second")
         PROFILE_FUNCTION()
         for (int i = 0; i < 10; i++)
         {
@@ -33,6 +36,7 @@ int main() {
     first.join();
     second.join();
     std::thread third([](){
+        PROFILE_THREAD("third")
         std::cout << std::this_thread::get_id() << std::endl;
     });
     third.join();
