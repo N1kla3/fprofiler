@@ -18,7 +18,7 @@ int8_t omp::prof::StompProfiler::GetIndexFromThreadId(std::thread::id ThreadId) 
     {
         return ThreadsInfo.at(ThreadId).IndexInProfiler;
     }
-    return -1;
+    throw std::exception("No thread profiler");
 }
 
 void omp::prof::StompProfiler::CreateThreadProfiler(const std::string& name)
@@ -33,4 +33,10 @@ void omp::prof::StompProfiler::CreateThreadProfiler(const std::string& name)
     ThreadsInfo[thread_id] = data;
     ThreadsProfilers.push_back(profiler);
     index++;
+}
+
+omp::prof::StompProfiler::StompProfiler()
+    : ProfilerStartTime(std::chrono::high_resolution_clock::now())
+{
+
 }

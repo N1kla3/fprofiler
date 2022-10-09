@@ -6,6 +6,13 @@
 #include <unordered_map>
 #include <thread>
 
+
+#if (_MSC_VER > 1200)
+using TimePoint = std::chrono::time_point<std::chrono::steady_clock>;
+#else
+using TimePoint = std::chrono::time_point<std::chrono::system_clock, std::chrono::nanoseconds>;
+#endif
+
 namespace omp::prof{
 
     struct ProfilerData
@@ -28,9 +35,11 @@ class StompProfiler {
     using ThreadProfPtr = std::shared_ptr<ThreadProfiler>;
 public:
     static StompProfiler& GetProfiler();
+    TimePoint GetStartTime() const { return ProfilerStartTime; }
 
 private:
-    StompProfiler() = default;
+    TimePoint ProfilerStartTime;
+    StompProfiler();
     ~StompProfiler() = default;
 public:
     StompProfiler(const StompProfiler&) = delete;

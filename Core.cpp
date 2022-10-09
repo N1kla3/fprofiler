@@ -6,17 +6,13 @@
 
 using namespace std::chrono;
 
-omp::prof::ScopeTime::ScopeTime()
-{
-    m_Start = high_resolution_clock::now();
-}
-
 omp::prof::ScopeTime::~ScopeTime()
 {
     SetupTime();
 }
 
 omp::prof::ScopeTime::ScopeTime(const std::string &name)
+    : m_Name(name)
 {
     m_Start = high_resolution_clock::now();
 }
@@ -36,5 +32,9 @@ void omp::prof::ScopeTime::SetupTime()
 
 omp::prof::ProfilerData omp::prof::ScopeTime::GetProfilerData() const
 {
+    const TimePoint Start = omp::prof::StompProfiler::GetProfiler().GetStartTime();
+    omp::prof::ProfilerData data{};
+    data.Name = m_Name;
+    data.BeginTime = std::chrono::duration<float, std::chrono::seconds::period>(Start - m_Start).count();
     return omp::prof::ProfilerData();
 }
