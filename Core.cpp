@@ -19,6 +19,7 @@ omp::prof::ScopeTime::ScopeTime(const std::string &name)
 
 void omp::prof::ScopeTime::SetupTime()
 {
+    std::cout << m_Name << std::endl;
     const auto end = high_resolution_clock::now();
     float time = std::chrono::duration<float, std::chrono::seconds::period>(end - m_Start).count();
     std::cout << time << std::endl;
@@ -28,6 +29,8 @@ void omp::prof::ScopeTime::SetupTime()
     auto ThreadId = std::this_thread::get_id();
     std::shared_ptr<omp::prof::ThreadProfiler> profiler = omp::prof::StompProfiler::GetProfiler().GetThreadProfiler(ThreadId);
     profiler->addData(*this);
+
+    std::cout << m_Name << " ended " << std::endl;
 }
 
 omp::prof::ProfilerData omp::prof::ScopeTime::GetProfilerData() const
@@ -36,5 +39,6 @@ omp::prof::ProfilerData omp::prof::ScopeTime::GetProfilerData() const
     omp::prof::ProfilerData data{};
     data.Name = m_Name;
     data.BeginTime = std::chrono::duration<float, std::chrono::seconds::period>(Start - m_Start).count();
-    return omp::prof::ProfilerData();
+    data.EndTime = std::chrono::duration<float, std::chrono::seconds::period>(Start - m_Start).count();
+    return data;
 }
